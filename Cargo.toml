@@ -5,6 +5,23 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.bench]
+debug = true
+
 [dependencies]
 ndarray = { version = "0.15.0", features = ["rayon"] }
 image = "0.24.6"
+
+[dev-dependencies]
+criterion = { version = "0.4", features = ["html_reports"]}
+iai = "0.1"
+
+[[bench]]
+name = "bench-criterion"
+path = "benches/criterion.rs"
+harness = false
+
+[[bench]]
+name = "bench-iai"
+path = "benches/iai.rs"
+harness = false

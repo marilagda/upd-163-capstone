@@ -1,10 +1,10 @@
 mod primitives;
 mod geometry;
-mod file_io;
 mod raytracer;
 
 use std::env;
 use primitives::{Vector3, Point3, Matrix4, Ray};
+use raytracer::{read_scene_file, write_image};
 
 fn test1() {
     let mymat = Matrix4::new(
@@ -42,9 +42,11 @@ fn main() {
     if args.len() < 2 {
         panic!("No scene files to render!");
     }
+    use std::time::Instant;
+    let now = Instant::now();
 
     println!("Reading scene file \"{}\"...", args[1]);
-    let scene = file_io::read_scene_file(&args[1]);
+    let scene = read_scene_file(&args[1]);
     println!("===== SCENE INFO =====");
     println!("Image size: {}x{}", scene.img_width, scene.img_height);
     println!("# vertices: {}", scene.vertices.0.len());
@@ -52,11 +54,14 @@ fn main() {
     println!("# lights: {}", scene.lights.lights.len());
 
     println!("Rendering scene. This will take some time...");
+
     let pixels = raytracer::render(&scene);
+    let elapsed = now.elapsed();
+
 
     println!("Saving scene to \"{}\"", "out.png");
     let img_obj = raytracer::build_image((scene.img_width, scene.img_height), &pixels);
-    file_io::write_image(&"out.png".to_string(), img_obj);
-
+    write_image(&"out.png".to_string(), img_obj);
+    println!("Elapsed: {:.2?}", elapsed);
     println!("===== RENDERING DONE!!! =====");
 }
